@@ -1,0 +1,38 @@
+# Codemagic CI/CD Build Configuration for THRIFT-HIVE 🐝
+# Documented guidelines for seamless building at codemagic.io
+
+workflows:
+  android-build:
+    name: Thrift-Hive Android Build
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      android_sdk: 34
+      ndk: 26.1.10909125
+      java: 17
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: true
+    scripts:
+      - name: Regenerate Gradle Wrapper to avoid binary corruption
+        script: |
+          gradle wrapper --gradle-version 9.3.1
+          chmod +x gradlew
+      - name: Decode Debug Keystore
+        script: |
+          if [ -f debug.keystore.base64 ]; then
+            base64 --decode debug.keystore.base64 > debug.keystore || base64 -d debug.keystore.base64 > debug.keystore || base64 -D debug.keystore.base64 > debug.keystore
+          fi
+      - name: Precompile and Build Android Debug APK
+        script: |
+          ./gradlew assembleDebug --no-daemon
+    artifacts:
+      - app/build/outputs/apk/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - nasifhimadri@gmail.com

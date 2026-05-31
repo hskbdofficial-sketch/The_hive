@@ -1,0 +1,6 @@
+{
+  "name": "THRIFT-HIVE",
+  "description": "Smart inventory, profit & loss, and returns tracker tailored for thrift clothing store owners",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
