@@ -8,7 +8,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       groups:
-        - keystore_credentials # For signing releases (optional)
+        # - keystore_credentials # For signing releases (optional, configure in Codemagic UI if using)
       vars:
         JAVA_VERSION: "17"
       node: latest
