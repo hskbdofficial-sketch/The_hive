@@ -7,8 +7,6 @@ workflows:
     environment:
       vars:
         JAVA_VERSION: "17"
-      groups:
-        - secrets
       java: "17"
 
     triggering:
@@ -32,16 +30,7 @@ workflows:
         script: |
           curl -L -o gradle/wrapper/gradle-wrapper.jar \
             "https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar"
-          echo "Gradle wrapper JAR replaced successfully."
-
-      - name: Inject google-services.json
-        script: |
-          echo $GOOGLE_SERVICES_JSON | base64 --decode > app/google-services.json
-          echo "google-services.json injected."
-
-      - name: Create .env file
-        script: |
-          echo "GEMINI_API_KEY=$GEMINI_API_KEY" > app/.env
+          echo "Gradle wrapper JAR replaced."
 
       - name: Build Debug APK
         script: |
