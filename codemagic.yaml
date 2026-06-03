@@ -2,7 +2,7 @@ workflows:
   android-thrift-build:
     name: THRIFTSIX Android Debug Build
     max_build_duration: 30
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
 
     environment:
       vars:
@@ -28,9 +28,14 @@ workflows:
 
       - name: Fix Gradle Wrapper JAR
         script: |
-          curl -L -o gradle/wrapper/gradle-wrapper.jar \
-            "https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar"
-          echo "Gradle wrapper JAR replaced."
+          curl -L -o /tmp/gradle-dist.zip \
+            "https://services.gradle.org/distributions/gradle-8.7-bin.zip"
+          unzip -o /tmp/gradle-dist.zip \
+            "gradle-8.7/lib/plugins/gradle-wrapper-*.jar" \
+            -d /tmp/gw
+          find /tmp/gw -name "gradle-wrapper-*.jar" | \
+            xargs -I{} cp {} gradle/wrapper/gradle-wrapper.jar
+          echo "JAR replaced: $(ls -lh gradle/wrapper/gradle-wrapper.jar)"
 
       - name: Build Debug APK
         script: |
