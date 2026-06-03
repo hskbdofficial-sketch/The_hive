@@ -2,7 +2,7 @@ workflows:
   android-thrift-build:
     name: THRIFTSIX Android Debug Build
     max_build_duration: 30
-    instance_type: mac_mini_m2
+    instance_type: mac_mini_m1
 
     environment:
       vars:
@@ -35,7 +35,12 @@ workflows:
             -d /tmp/gw
           find /tmp/gw -name "gradle-wrapper-*.jar" | \
             xargs -I{} cp {} gradle/wrapper/gradle-wrapper.jar
-          echo "JAR replaced: $(ls -lh gradle/wrapper/gradle-wrapper.jar)"
+          git config user.email "ahad50502p@gmail.com"
+          git config user.name "Codemagic Bot"
+          git add gradle/wrapper/gradle-wrapper.jar
+          git diff --cached --quiet || git commit -m "fix: replace corrupt gradle-wrapper.jar"
+          git push origin main
+          echo "JAR fixed and pushed."
 
       - name: Build Debug APK
         script: |
