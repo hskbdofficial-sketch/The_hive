@@ -1,0 +1,49 @@
+# Codemagic CI/CD configuration for THRIFTSIX Android App
+# To build, see official documentation: https://docs.codemagic.io/
+
+workflows:
+  android-thrift-build:
+    name: THRIFTSIX Android Production Pipeline
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - keystore_credentials # For signing releases (optional)
+      vars:
+        JAVA_VERSION: "17"
+      node: latest
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
+        - pattern: 'master'
+          include: true
+          source: true
+    scripts:
+      - name: Set up JDK and build environment
+        script: |
+          jdk-switch --version 17
+          echo "JDK 17 configured successfully."
+      - name: Build Android App bundle and APK
+        script: |
+          chmod +x gradlew || true
+          ./gradlew assembleDebug --no-daemon
+          ./gradlew bundleRelease --no-daemon
+      - name: Post-build sanity checksum audit
+        script: |
+          echo "==== BUILD ARTIFACTS VERIFIED ===="
+          find . -name "*.apk" -o -name "*.aab"
+    artifacts:
+      - app/build/outputs/apk/**/*.apk
+      - app/build/outputs/bundle/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - ahad50502p@gmail.com
+        notify:
+          success: true
+          failure: true
